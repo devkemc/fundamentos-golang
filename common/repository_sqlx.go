@@ -9,24 +9,28 @@ type repositorySqlx struct {
 	transaction *sqlx.Tx
 }
 
-func (r repositorySqlx) GetTx() *sqlx.Tx {
+func (r *repositorySqlx) GetTx() *sqlx.Tx {
 	return r.transaction
 }
 
-func (r repositorySqlx) InitTransaction() {
+func (r *repositorySqlx) InitTransaction() {
 	if r.transaction == nil {
 		r.transaction = r.db.MustBegin()
 	}
 }
 
-func (r repositorySqlx) Commit() error {
-	return r.transaction.Commit()
+func (r *repositorySqlx) Commit() error {
+	err := r.transaction.Commit()
+	r.transaction = nil
+	return err
 }
 
-func (r repositorySqlx) Rollback() error {
-	return r.transaction.Rollback()
+func (r *repositorySqlx) Rollback() error {
+	err := r.transaction.Rollback()
+	r.transaction = nil
+	return err
 }
 
 func NewRepositorySqlx(db *sqlx.DB) Repository {
-	return repositorySqlx{db: db}
+	return &repositorySqlx{db: db}
 }

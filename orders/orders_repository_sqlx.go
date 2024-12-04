@@ -49,13 +49,12 @@ func (o orderRepositorySqlx) GetAllOrders(ctx context.Context) ([]Order, error) 
 
 func (o orderRepositorySqlx) SaveOrder(ctx context.Context, order Order) (int64, error) {
 	query := `
-	INSERT INTO orders (status, customer_id, created_at)
-	VALUES (:status, :customer_id, :created_at)
+	INSERT INTO orders (status, customer_id)
+	VALUES (:status, :customer_id)
 	`
 	args := map[string]interface{}{
 		"status":      order.Status,
 		"customer_id": order.CustomerId,
-		"created_at":  order.CreatedAt,
 	}
 	tx := o.GetTx()
 	result, err := tx.NamedExecContext(ctx, query, args)
