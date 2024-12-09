@@ -9,6 +9,24 @@ type orderRepositorySqlx struct {
 	common.Repository
 }
 
+func (o orderRepositorySqlx) FindItemsByOrderId(ctx context.Context, orderId int64) ([]Item, error) {
+	query := `
+		SELECT 	product_id, 
+				quantity, 
+				order_id
+		FROM	items
+		WHERE order_id = ?
+	`
+
+	args := []interface{}{orderId}
+	var items []Item
+	err := o.GetTx(ctx).SelectContext(ctx, &items, query, args...)
+	if err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 func NewOrderRepositorySqlx(repository common.Repository) OrderRepository {
 	return &orderRepositorySqlx{repository}
 }

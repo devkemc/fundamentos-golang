@@ -27,13 +27,16 @@ func main() {
 		panic(err)
 	}
 
+	customerRepo := customers.NewCustomerRepositorySqlx(common.NewRepositorySqlx(db))
+	customerService := customers.NewCustomerServiceV1(customerRepo)
+
 	paymentRepo := payments.NewPaymentRepositorySqlx(common.NewRepositorySqlx(db))
 	paymentService := payments.NewPaymentsServiceSimulator(paymentRepo)
 
 	emailService := emails.NewEmailServiceSimulator()
 
 	orderRepo := orders.NewOrderRepositorySqlx(common.NewRepositorySqlx(db))
-	orderServ := orders.NewOrderServiceV1(orderRepo, emailService, paymentService)
+	orderServ := orders.NewOrderServiceV1(orderRepo, emailService, paymentService, customerService)
 	orderHandler := orders.NewOrderHandler(orderServ)
 
 	port := flag.String(portFlag, "8080", "port to server")

@@ -25,7 +25,7 @@ type Payment struct {
 	Amount  float32       `json:"amount" db:"amount"`
 	Type    paymentType   `json:"type" db:"type"`
 	Status  paymentStatus `json:"status" db:"status"`
-	OrderId int64         `json:"order" db:"order_id"`
+	OrderId int64         `json:"-" db:"order_id"`
 }
 
 func (p *Payment) ValidatePayment() error {
