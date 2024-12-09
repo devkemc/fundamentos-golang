@@ -10,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
 	"log"
+	"os"
 )
 
 const (
@@ -17,7 +18,8 @@ const (
 )
 
 func main() {
-	db, err := sqlx.Connect("sqlite3", "__ecommerce.db")
+
+	db, err := sqlx.Connect("mysql", os.Getenv(common.ConnectionString))
 	if err != nil {
 		log.Fatalln(err)
 	}
