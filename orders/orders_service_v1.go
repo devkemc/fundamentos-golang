@@ -5,6 +5,7 @@ import (
 	"github.com/devkemc/fundamentos-golang/customers"
 	"github.com/devkemc/fundamentos-golang/emails"
 	"github.com/devkemc/fundamentos-golang/payments"
+	"github.com/devkemc/fundamentos-golang/products"
 )
 
 type orderServiceV1 struct {
@@ -12,6 +13,7 @@ type orderServiceV1 struct {
 	emailService    emails.EmailService
 	paymentService  payments.PaymentService
 	customerService customers.CustomerService
+	productService  products.ProductService
 }
 
 func (o orderServiceV1) GetOrderDetails(ctx context.Context, orderId int64) (*Order, error) {
@@ -35,6 +37,14 @@ func (o orderServiceV1) GetOrderDetails(ctx context.Context, orderId int64) (*Or
 		return nil, err
 	}
 
+	for idx := range order.Items {
+		item := &order.Items[idx]
+		item.Product, err = o.productService.GetProductById(ctx, item.ProductId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return order, nil
 }
 
@@ -44,6 +54,11 @@ func (o orderServiceV1) GetOrders(ctx context.Context) ([]Order, error) {
 
 func (o orderServiceV1) Sell(ctx context.Context, order *Order) error {
 	if err := order.ValidateToSell(ctx); err != nil {
+		return err
+	}
+
+	err := o.calculateAmount(ctx, order)
+	if err != nil {
 		return err
 	}
 
@@ -77,6 +92,18 @@ func (o orderServiceV1) Sell(ctx context.Context, order *Order) error {
 	return nil
 }
 
-func NewOrderServiceV1(orderRepository OrderRepository, emailService emails.EmailService, paymentService payments.PaymentService, customerService customers.CustomerService) OrderService {
-	return &orderServiceV1{orderRepository, emailService, paymentService, customerService}
+func (o orderServiceV1) calculateAmount(ctx context.Context, order *Order) error {
+	for idx := range order.Items {
+		item := &order.Items[idx]
+		product, err := o.productService.GetProductById(ctx, item.ProductId)
+		if err != nil {
+			return err
+		}
+		item.Amount = float64(item.Quantity) * product.Price
+	}
+	return nil
+}
+
+func NewOrderServiceV1(orderRepository OrderRepository, emailService emails.EmailService, paymentService payments.PaymentService, customerService customers.CustomerService, productService products.ProductService) OrderService {
+	return &orderServiceV1{orderRepository, emailService, paymentService, customerService, productService}
 }

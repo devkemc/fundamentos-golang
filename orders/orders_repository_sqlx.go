@@ -13,7 +13,8 @@ func (o orderRepositorySqlx) FindItemsByOrderId(ctx context.Context, orderId int
 	query := `
 		SELECT 	product_id, 
 				quantity, 
-				order_id
+				order_id,
+				amount
 		FROM	items
 		WHERE order_id = ?
 	`
@@ -83,14 +84,15 @@ func (o orderRepositorySqlx) SaveOrder(ctx context.Context, order Order) (int64,
 	}
 
 	query = `
-			INSERT INTO items (product_id, quantity, order_id)
-			VALUES (:product_id, :quantity, :order_id)
+			INSERT INTO items (product_id, quantity, order_id, amount)
+			VALUES (:product_id, :quantity, :order_id, :amount);
 		`
 	for _, item := range order.Items {
 		args = map[string]interface{}{
 			"product_id": item.ProductId,
 			"quantity":   item.Quantity,
 			"order_id":   orderId,
+			"amount":     item.Amount,
 		}
 		_, err := tx.NamedExecContext(ctx, query, args)
 		if err != nil {

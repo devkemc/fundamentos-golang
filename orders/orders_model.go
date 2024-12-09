@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/devkemc/fundamentos-golang/customers"
 	"github.com/devkemc/fundamentos-golang/payments"
+	"github.com/devkemc/fundamentos-golang/products"
 	"time"
 )
 
@@ -26,9 +27,11 @@ type Order struct {
 }
 
 type Item struct {
-	ProductId int64 `db:"product_id" json:"product_id"`
-	Quantity  int64 `db:"quantity" json:"quantity"`
-	OrderId   int64 `db:"order_id" json:"-"`
+	Product   *products.Product `db:"-" json:"product,omitempty"`
+	ProductId int64             `db:"product_id" json:"product_id"`
+	Quantity  int64             `db:"quantity" json:"quantity"`
+	OrderId   int64             `db:"order_id" json:"-"`
+	Amount    float64           `db:"amount" json:"amount"`
 }
 
 func (o *Order) ValidateToSell(ctx context.Context) error {
@@ -45,6 +48,7 @@ func (o *Order) ValidateToSell(ctx context.Context) error {
 	if len(o.Items) == 0 {
 		return errItemsIsRequired
 	}
+
 	//todo: validate items
 
 	return nil
