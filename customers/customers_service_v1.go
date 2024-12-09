@@ -6,7 +6,7 @@ type customerServiceV1 struct {
 	customerRepository CustomerRepository
 }
 
-func (c customerServiceV1) GetCustomerById(ctx context.Context, id int) (*Customer, error) {
+func (c customerServiceV1) GetCustomerById(ctx context.Context, id int64) (*Customer, error) {
 	return c.customerRepository.FindCustomerById(ctx, id)
 }
 

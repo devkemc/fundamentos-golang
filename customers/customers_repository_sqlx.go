@@ -9,7 +9,7 @@ type CustomerRepositorySqlx struct {
 	common.Repository
 }
 
-func (c CustomerRepositorySqlx) FindCustomerById(ctx context.Context, customerId int) (*Customer, error) {
+func (c CustomerRepositorySqlx) FindCustomerById(ctx context.Context, customerId int64) (*Customer, error) {
 	query := `
 		SELECT	id,
 		    	name,
