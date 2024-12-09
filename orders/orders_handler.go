@@ -26,5 +26,9 @@ func (h *OrderHandler) GetOrderDetails(ctx *fiber.Ctx) error {
 }
 
 func (h *OrderHandler) GetAllOrders(ctx *fiber.Ctx) error {
-	return nil
+	orders, err := h.orderService.GetOrders(ctx.Context())
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(orders)
 }

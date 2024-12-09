@@ -17,11 +17,11 @@ const (
 
 type Order struct {
 	Id         int64               `db:"id" json:"id"`
-	Payments   []payments.Payment  `db:"-" json:"payments"`
+	Payments   []payments.Payment  `db:"-" json:"payments,omitempty"`
 	Status     status              `db:"status" json:"status"`
 	CustomerId int64               `db:"customer_id" json:"customer_id"`
-	Items      []Item              `db:"-" json:"items"`
-	Customer   *customers.Customer `db:"-" json:"customer;omitempty"`
+	Items      []Item              `db:"-" json:"items,omitempty"`
+	Customer   *customers.Customer `db:"-" json:"customer,omitempty"`
 	CreatedAt  time.Time           `db:"created_at" json:"created_at"`
 }
 
