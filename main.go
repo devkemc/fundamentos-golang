@@ -136,7 +136,6 @@ func createTables(db *sqlx.DB) error {
 	INSERT INTO products (id, name, description, price) VALUES
 	 (1, 'iphone 15 pro max', 'iphone 15 pro max 256 gb', 5800.99),
 	  (2, 'iphone 15 pro', 'iphone 15 pro max 128 gb', 4800.12)
-	ON DUPLICATE KEY UPDATE name = name;
 `
 	_, err = db.Exec(defaultsProducts)
 	if err != nil {
