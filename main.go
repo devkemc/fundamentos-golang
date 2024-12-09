@@ -6,9 +6,9 @@ import (
 	"github.com/devkemc/fundamentos-golang/emails"
 	"github.com/devkemc/fundamentos-golang/orders"
 	"github.com/devkemc/fundamentos-golang/payments"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
 

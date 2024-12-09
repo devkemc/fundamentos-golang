@@ -20,7 +20,7 @@ func (p paymentRepositorySqlx) SavePayment(ctx context.Context, payment Payment)
 		"status":   payment.Status,
 		"order_id": payment.OrderId,
 	}
-	result, err := p.GetTx().NamedExecContext(ctx, query, args)
+	result, err := p.GetTx(ctx).NamedExecContext(ctx, query, args)
 	if err != nil {
 		return 0, err
 	}
@@ -39,9 +39,8 @@ func (p paymentRepositorySqlx) FindPaymentsByOrderId(ctx context.Context, orderI
 	`
 	var payments []Payment
 
-	p.InitTransaction()
 	defer p.Rollback()
-	if err := p.GetTx().SelectContext(ctx, &payments, query, orderId); err != nil {
+	if err := p.GetTx(ctx).SelectContext(ctx, &payments, query, orderId); err != nil {
 		return nil, err
 	}
 	return payments, nil

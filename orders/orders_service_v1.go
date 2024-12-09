@@ -25,7 +25,7 @@ func (o orderServiceV1) Sell(ctx context.Context, order *Order) error {
 		return err
 	}
 
-	o.orderRepository.InitTransaction()
+	o.orderRepository.InitTransaction(ctx)
 
 	order.Status = orderPending
 	orderId, err := o.orderRepository.SaveOrder(ctx, *order)
@@ -33,13 +33,16 @@ func (o orderServiceV1) Sell(ctx context.Context, order *Order) error {
 		o.orderRepository.Rollback()
 		return err
 	}
-	order.Id = orderId
-	if err := o.paymentService.ProcessPayments(ctx, order.Payments, orderId); err != nil {
-		o.orderRepository.Rollback()
+
+	err = o.orderRepository.Commit()
+	if err != nil {
 		return err
 	}
 
-	o.orderRepository.Commit()
+	order.Id = orderId
+	if err := o.paymentService.ProcessPayments(ctx, order.Payments, orderId); err != nil {
+		return err
+	}
 
 	if err := o.orderRepository.ConfirmOrder(ctx, order.Id); err != nil {
 		return err

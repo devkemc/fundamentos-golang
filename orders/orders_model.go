@@ -28,7 +28,7 @@ type Order struct {
 type Item struct {
 	ProductId int64 `db:"product_id" json:"product_id"`
 	Quantity  int64 `db:"quantity" json:"quantity"`
-	OrderId   int64 `db:"order_id" json:"_"`
+	OrderId   int64 `db:"order_id" json:"-"`
 }
 
 func (o *Order) ValidateToSell(ctx context.Context) error {

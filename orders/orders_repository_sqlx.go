@@ -23,8 +23,7 @@ func (o orderRepositorySqlx) FindOrderById(ctx context.Context, orderId int64) (
 		WHERE id = ?;
 	`
 	var order Order
-	o.InitTransaction()
-	if err := o.GetTx().QueryRowxContext(ctx, query, orderId).StructScan(&order); err != nil {
+	if err := o.GetTx(ctx).QueryRowxContext(ctx, query, orderId).StructScan(&order); err != nil {
 		return nil, err
 	}
 	return &order, nil
@@ -38,10 +37,9 @@ func (o orderRepositorySqlx) GetAllOrders(ctx context.Context) ([]Order, error) 
 				created_at
 		FROM orders
 	`
-	o.InitTransaction()
 	defer o.Rollback()
 	var orders []Order
-	if err := o.GetTx().SelectContext(ctx, &orders, query); err != nil {
+	if err := o.GetTx(ctx).SelectContext(ctx, &orders, query); err != nil {
 		return nil, err
 	}
 	return orders, nil
@@ -56,7 +54,7 @@ func (o orderRepositorySqlx) SaveOrder(ctx context.Context, order Order) (int64,
 		"status":      order.Status,
 		"customer_id": order.CustomerId,
 	}
-	tx := o.GetTx()
+	tx := o.GetTx(ctx)
 	result, err := tx.NamedExecContext(ctx, query, args)
 	if err != nil {
 		return 0, err
@@ -94,8 +92,7 @@ func (o orderRepositorySqlx) ConfirmOrder(ctx context.Context, orderId int64) er
 		orderConfirmed,
 		orderId,
 	}
-	o.InitTransaction()
-	tx := o.GetTx()
+	tx := o.GetTx(ctx)
 	_, err := tx.ExecContext(ctx, query, args...)
 	if err != nil {
 		o.Rollback()
