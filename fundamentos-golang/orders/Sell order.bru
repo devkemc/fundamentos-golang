@@ -6,6 +6,28 @@ meta {
 
 post {
   url: {{v1}}/orders
-  body: none
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "customer_id": 1,
+    "payments": [
+      {
+        "amount": 5,
+        "type": "CREDIT"
+      }
+    ],
+    "items": [
+      {
+        "product_id": 1,
+        "quantity": 2
+      },
+      {
+        "product_id": 2,
+        "quantity": 1
+      }
+    ]
+  }
 }

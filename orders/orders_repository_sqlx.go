@@ -3,6 +3,7 @@ package orders
 import (
 	"context"
 	"github.com/devkemc/fundamentos-golang/common"
+	"time"
 )
 
 type orderRepositorySqlx struct {
@@ -10,8 +11,10 @@ type orderRepositorySqlx struct {
 }
 
 func (o orderRepositorySqlx) FindItemsByOrderId(ctx context.Context, orderId int64) ([]Item, error) {
+	time.Sleep(time.Second * 10)
 	query := `
-		SELECT 	product_id, 
+		SELECT 	id,
+		    	product_id, 
 				quantity, 
 				order_id,
 				amount

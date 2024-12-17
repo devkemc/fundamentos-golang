@@ -12,7 +12,7 @@ type paymentsServiceSimulator struct {
 func (p paymentsServiceSimulator) ProcessPayments(ctx context.Context, payments []Payment, orderId int64) error {
 	p.paymentRepository.InitTransaction(ctx)
 	for _, payment := range payments {
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second * 10)
 		payment.Status = pStatusAccepted
 		payment.OrderId = orderId
 		_, err := p.paymentRepository.SavePayment(ctx, payment)
@@ -26,6 +26,7 @@ func (p paymentsServiceSimulator) ProcessPayments(ctx context.Context, payments 
 }
 
 func (p paymentsServiceSimulator) GetPaymentsByOrderId(ctx context.Context, orderId int64) ([]Payment, error) {
+	time.Sleep(time.Second * 10)
 	return p.paymentRepository.FindPaymentsByOrderId(ctx, orderId)
 }
 
